@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+
 import 'book_model.dart';
 
 part 'books_response.g.dart';
@@ -10,7 +11,7 @@ class BooksResponse {
   final String? previous;
   final List<BookModel> results;
 
-  const BooksResponse({
+  BooksResponse({
     required this.count,
     this.next,
     this.previous,

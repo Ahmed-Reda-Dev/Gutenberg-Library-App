@@ -21,19 +21,17 @@ class BookModelAdapter extends TypeAdapter<BookModel> {
       title: fields[1] as String,
       authors: (fields[2] as List).cast<AuthorModel>(),
       summaries: (fields[3] as List?)?.cast<String>(),
-      formats: (fields[4] as Map).cast<String, String>(),
+      languages: (fields[4] as List).cast<String>(),
       subjects: (fields[5] as List).cast<String>(),
-      languages: (fields[6] as List).cast<String>(),
-      copyright: fields[7] as bool,
-      mediaType: fields[8] as String,
-      downloadCount: (fields[9] as num).toInt(),
+      downloadCount: (fields[6] as num).toInt(),
+      formats: (fields[7] as Map).cast<String, dynamic>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, BookModel obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -43,17 +41,13 @@ class BookModelAdapter extends TypeAdapter<BookModel> {
       ..writeByte(3)
       ..write(obj.summaries)
       ..writeByte(4)
-      ..write(obj.formats)
+      ..write(obj.languages)
       ..writeByte(5)
       ..write(obj.subjects)
       ..writeByte(6)
-      ..write(obj.languages)
+      ..write(obj.downloadCount)
       ..writeByte(7)
-      ..write(obj.copyright)
-      ..writeByte(8)
-      ..write(obj.mediaType)
-      ..writeByte(9)
-      ..write(obj.downloadCount);
+      ..write(obj.formats);
   }
 
   @override
@@ -80,14 +74,12 @@ BookModel _$BookModelFromJson(Map<String, dynamic> json) => BookModel(
           .toList(),
   summaries:
       (json['summaries'] as List<dynamic>?)?.map((e) => e as String).toList(),
-  formats: Map<String, String>.from(json['formats'] as Map),
-  subjects:
-      (json['subjects'] as List<dynamic>).map((e) => e as String).toList(),
   languages:
       (json['languages'] as List<dynamic>).map((e) => e as String).toList(),
-  copyright: json['copyright'] as bool,
-  mediaType: json['media_type'] as String,
+  subjects:
+      (json['subjects'] as List<dynamic>).map((e) => e as String).toList(),
   downloadCount: (json['download_count'] as num).toInt(),
+  formats: json['formats'] as Map<String, dynamic>,
 );
 
 Map<String, dynamic> _$BookModelToJson(BookModel instance) => <String, dynamic>{
@@ -95,10 +87,8 @@ Map<String, dynamic> _$BookModelToJson(BookModel instance) => <String, dynamic>{
   'title': instance.title,
   'authors': instance.authors,
   'summaries': instance.summaries,
-  'formats': instance.formats,
-  'subjects': instance.subjects,
   'languages': instance.languages,
-  'copyright': instance.copyright,
-  'media_type': instance.mediaType,
+  'subjects': instance.subjects,
   'download_count': instance.downloadCount,
+  'formats': instance.formats,
 };

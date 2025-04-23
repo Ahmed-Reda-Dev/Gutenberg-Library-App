@@ -1,42 +1,57 @@
 import 'package:dio/dio.dart';
 
-import 'api_error_model.dart';
+class ApiError {
+  final String? message;
+  final int? statusCode;
 
-class ApiErrorHandler {
-  static ApiErrorModel handle(dynamic error) {
-    if (error is DioException) {
-      switch (error.type) {
-        case DioExceptionType.connectionError:
-          return ApiErrorModel(message: "Connection to server failed");
-        case DioExceptionType.cancel:
-          return ApiErrorModel(message: "Request to the server was cancelled");
-        case DioExceptionType.connectionTimeout:
-          return ApiErrorModel(message: "Connection timeout with the server");
-        case DioExceptionType.unknown:
-          return ApiErrorModel(
-              message:
-                  "Connection to the server failed due to internet connection");
-        case DioExceptionType.receiveTimeout:
-          return ApiErrorModel(
-              message: "Receive timeout in connection with the server");
-        case DioExceptionType.badResponse:
-          return _handleError(error.response?.data);
-        case DioExceptionType.sendTimeout:
-          return ApiErrorModel(
-              message: "Send timeout in connection with the server");
-        default:
-          return ApiErrorModel(message: "Something went wrong");
-      }
-    } else {
-      return ApiErrorModel(message: "Unknown error occurred");
-    }
-  }
+  ApiError({this.message, this.statusCode});
 }
 
-ApiErrorModel _handleError(dynamic data) {
-  return ApiErrorModel(
-    message: data['message'] ?? "Unknown error occurred",
-    code: data['code'],
-    errors: data['data'],
-  );
+class ApiErrorHandler {
+  static ApiError handle(DioException error) {
+    switch (error.type) {
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+        return ApiError(
+          message: 'Connection timeout, please try again later',
+          statusCode: error.response?.statusCode,
+        );
+      case DioExceptionType.connectionError:
+        return ApiError(
+          message: 'No internet connection',
+          statusCode: error.response?.statusCode,
+        );
+      case DioExceptionType.badResponse:
+        return _handleResponseError(error);
+      default:
+        return ApiError(
+          message: 'Something went wrong, please try again later',
+          statusCode: error.response?.statusCode,
+        );
+    }
+  }
+
+  static ApiError _handleResponseError(DioException error) {
+    final statusCode = error.response?.statusCode;
+    final message = error.response?.data['message'] ?? 'Unknown error occurred';
+
+    switch (statusCode) {
+      case 400:
+        return ApiError(message: 'Bad request', statusCode: statusCode);
+      case 401:
+        return ApiError(message: 'Unauthorized', statusCode: statusCode);
+      case 403:
+        return ApiError(message: 'Forbidden', statusCode: statusCode);
+      case 404:
+        return ApiError(message: 'Not found', statusCode: statusCode);
+      case 500:
+        return ApiError(
+          message: 'Internal server error',
+          statusCode: statusCode,
+        );
+      default:
+        return ApiError(message: message, statusCode: statusCode);
+    }
+  }
 }

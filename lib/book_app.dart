@@ -1,4 +1,7 @@
+import 'package:book_listing_app/core/di/dependency_injection.dart';
+import 'package:book_listing_app/features/home/presentation/cubit/book_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'core/routing/app_router.dart';
@@ -13,14 +16,16 @@ class BookApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: const Size(375, 812),
       minTextAdapt: true,
-      child: MaterialApp(
-        title: 'Gutenberg Library App',
-        theme: ThemeData(
-          scaffoldBackgroundColor: Colors.white,
+      splitScreenMode: true,
+      child: BlocProvider(
+        create: (context) => getIt<BookCubit>(),
+        child: MaterialApp(
+          title: 'Gutenberg Library App',
+          theme: ThemeData(scaffoldBackgroundColor: Colors.white),
+          debugShowCheckedModeBanner: false,
+          initialRoute: Routes.homeScreen,
+          onGenerateRoute: appRouter.generateRoute,
         ),
-        debugShowCheckedModeBanner: false,
-        initialRoute: Routes.homeScreen,
-        onGenerateRoute: appRouter.generateRoute,
       ),
     );
   }

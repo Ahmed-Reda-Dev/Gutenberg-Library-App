@@ -2,9 +2,9 @@
 // Do not modify
 // Check in to version control
 
+import 'package:hive_ce/hive.dart';
 import 'package:book_listing_app/features/home/data/models/author_model.dart';
 import 'package:book_listing_app/features/home/data/models/book_model.dart';
-import 'package:hive_ce_flutter/hive_flutter.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
