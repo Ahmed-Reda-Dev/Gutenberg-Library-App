@@ -69,14 +69,78 @@ class _HomeScreenState extends State<HomeScreen> {
     context.read<BookCubit>().resetSearch();
   }
 
+  // ListView for phone view
+  Widget _buildListView(List<dynamic> books, bool hasReachedMax) {
+    return ListView.builder(
+      controller: _scrollController,
+      itemCount: books.length + (hasReachedMax ? 0 : 1),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      itemBuilder: (context, index) {
+        if (index >= books.length) {
+          return Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.h),
+            child: Center(
+              child: CircularProgressIndicator(color: ColorsManager.mainBlue),
+            ),
+          );
+        }
+
+        return Padding(
+          padding: EdgeInsets.only(bottom: 16.h),
+          child: BookListItem(book: books[index]),
+        );
+      },
+    );
+  }
+
+  // GridView for tablet view
+  Widget _buildGridView(
+    List<dynamic> books,
+    bool hasReachedMax,
+    bool isLandscape,
+  ) {
+    // Determine grid column count based on orientation
+    final columnCount = isLandscape ? 2 : 2;
+
+    return GridView.builder(
+      controller: _scrollController,
+      padding: EdgeInsets.all(16.w),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: columnCount,
+        childAspectRatio: isLandscape ? 1.5 : 0.7,
+        crossAxisSpacing: 16.w,
+        mainAxisSpacing: 16.h,
+      ),
+      itemCount: books.length + (hasReachedMax ? 0 : 1),
+      itemBuilder: (context, index) {
+        if (index >= books.length) {
+          return Center(
+            child: CircularProgressIndicator(color: ColorsManager.mainBlue),
+          );
+        }
+
+        return BookListItem(book: books[index]);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Determine if we're on a tablet based on width
+    final isTablet = MediaQuery.of(context).size.width >= 600;
+    // Check if we're in landscape orientation
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         title: Text('Book Listing App', style: TextStyles.font24BlueBold),
+        // Add adaptable back button padding for iOS
+        automaticallyImplyLeading: false,
+        centerTitle: Theme.of(context).platform == TargetPlatform.iOS,
       ),
       body: Column(
         children: [
@@ -99,7 +163,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   final books = state.books;
                   final hasReachedMax = state.hasReachedMax;
                   final searchQuery = state.searchQuery;
-
                   if (books.isEmpty) {
                     return Center(
                       child: Text(
@@ -122,28 +185,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         await context.read<BookCubit>().getBooks(refresh: true);
                       }
                     },
-                    child: ListView.builder(
-                      controller: _scrollController,
-                      itemCount: books.length + (hasReachedMax ? 0 : 1),
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      itemBuilder: (context, index) {
-                        if (index >= books.length) {
-                          return Padding(
-                            padding: EdgeInsets.symmetric(vertical: 16.h),
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: ColorsManager.mainBlue,
-                              ),
-                            ),
-                          );
-                        }
-
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 16.h),
-                          child: BookListItem(book: books[index]),
-                        );
-                      },
-                    ),
+                    child:
+                        isTablet
+                            ? _buildGridView(books, hasReachedMax, isLandscape)
+                            : _buildListView(books, hasReachedMax),
                   );
                 } else if (state is Error) {
                   return Center(

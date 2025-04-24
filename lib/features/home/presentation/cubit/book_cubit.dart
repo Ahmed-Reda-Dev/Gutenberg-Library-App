@@ -128,11 +128,16 @@ class BookCubit extends Cubit<BookState> {
       final errorMsg = (result).error;
 
       // If we have books in the state already (pagination failure),
-      // keep the existing state but maybe show a snackbar
+      // keep the existing state but maybe show a message to the user
       if (state is Success && page > 1) {
         // Keep the current state but maybe show a message to the user
       } else {
-        emit(BookState.error(errorMsg));
+        // For first page failures, try to load from cache
+        if (page == 1 && searchQuery == null) {
+          _loadFromCacheOnError();
+        } else {
+          emit(BookState.error(errorMsg));
+        }
       }
     }
   }
@@ -140,6 +145,33 @@ class BookCubit extends Cubit<BookState> {
   void resetSearch() {
     if (state is Success && (state as Success).searchQuery != null) {
       getBooks(refresh: true);
+    }
+  }
+
+  /// Loads books from the cache when an API request fails
+  Future<void> _loadFromCacheOnError() async {
+    try {
+      final cachedBooks = await _getBooksUseCase.getCachedBooks();
+      if (cachedBooks.isNotEmpty) {
+        emit(
+          BookState.success(
+            books: cachedBooks,
+            hasReachedMax:
+                true, // Consider we've reached max since we're offline
+            currentPage: 0,
+            searchQuery: null,
+          ),
+        );
+      } else {
+        // No cached data available
+        emit(
+          const BookState.error(
+            "No internet connection and no cached data available",
+          ),
+        );
+      }
+    } catch (e) {
+      emit(BookState.error("Failed to load cached data: ${e.toString()}"));
     }
   }
 }

@@ -1,11 +1,12 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../core/theming/colors.dart';
-import '../../../../core/theming/styles.dart';
-import '../../../home/data/models/book_model.dart';
+import '../../data/models/book_model.dart';
+import 'book_list/phone_layout.dart';
+import 'book_list/phone_landscape_layout.dart';
+import 'book_list/tablet_layout.dart';
 
+/// Main book list item widget that adapts to different device types and orientations
 class BookListItem extends StatefulWidget {
   final BookModel book;
 
@@ -18,153 +19,63 @@ class BookListItem extends StatefulWidget {
 class _BookListItemState extends State<BookListItem> {
   bool _isExpanded = false;
 
+  void _toggleExpand() {
+    setState(() {
+      _isExpanded = !_isExpanded;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Check if we're on a tablet or in landscape orientation
+    final isTablet = MediaQuery.of(context).size.width >= 600;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    final isPhoneLandscape = isLandscape && !isTablet;
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.all(16.r),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Book cover image
-                _buildCoverImage(),
-                SizedBox(width: 16.w),
-                // Book details
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Title
-                      Text(
-                        widget.book.title,
-                        style: TextStyles.font13DarkBlueMedium,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(height: 8.h),
-                      // Authors
-                      Text(
-                        'By ${widget.book.authorNames.join(', ')}',
-                        style: TextStyles.font13GrayRegular,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(height: 8.h),
-                      // Languages
-                      Text(
-                        'Languages: ${widget.book.languages.join(', ')}',
-                        style: TextStyles.font13GrayRegular,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(height: 8.h),
-                      // Download count
-                      Text(
-                        'Downloads: ${widget.book.downloadCount}',
-                        style: TextStyles.font13GrayRegular,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-
-            // Summary section if available
-            if (widget.book.summary != null &&
-                widget.book.summary!.isNotEmpty) ...[
-              SizedBox(height: 16.h),
-              // Summary title
-              Text('Summary', style: TextStyles.font13BlueSemiBold),
-              SizedBox(height: 8.h),
-              // Summary with expandable functionality
-              _buildExpandableSummary(),
-            ],
-          ],
-        ),
+        padding: EdgeInsets.all(isTablet ? 20.r : 16.r),
+        child: _buildAdaptiveLayout(isTablet, isLandscape, isPhoneLandscape),
       ),
     );
   }
 
-  Widget _buildCoverImage() {
-    return SizedBox(
-      width: 80.w,
-      height: 120.h,
-      child:
-          widget.book.coverImageUrl != null
-              ? ClipRRect(
-                borderRadius: BorderRadius.circular(8.r),
-                child: CachedNetworkImage(
-                  imageUrl: widget.book.coverImageUrl!,
-                  fit: BoxFit.cover,
-                  placeholder:
-                      (context, url) => Container(
-                        color: ColorsManager.lighterGray,
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: ColorsManager.mainBlue,
-                            strokeWidth: 2,
-                          ),
-                        ),
-                      ),
-                  errorWidget:
-                      (context, url, error) => Container(
-                        color: ColorsManager.lighterGray,
-                        child: const Icon(
-                          Icons.book,
-                          color: ColorsManager.gray,
-                        ),
-                      ),
-                ),
-              )
-              : Container(
-                decoration: BoxDecoration(
-                  color: ColorsManager.lighterGray,
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: const Center(
-                  child: Icon(Icons.book, color: ColorsManager.gray),
-                ),
-              ),
-    );
-  }
-
-  Widget _buildExpandableSummary() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          widget.book.summary!,
-          style: TextStyles.font13DarkBlueRegular,
-          maxLines: _isExpanded ? null : 3,
-          overflow: _isExpanded ? null : TextOverflow.ellipsis,
-        ),
-        SizedBox(height: 8.h),
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              _isExpanded = !_isExpanded;
-            });
-          },
-          child: Text(
-            _isExpanded ? 'See Less' : 'See More',
-            style: TextStyles.font13BlueSemiBold,
-          ),
-        ),
-      ],
-    );
+  /// Builds the appropriate layout based on device and orientation
+  Widget _buildAdaptiveLayout(
+    bool isTablet,
+    bool isLandscape,
+    bool isPhoneLandscape,
+  ) {
+    if (isPhoneLandscape) {
+      return PhoneLandscapeLayout(
+        book: widget.book,
+        isExpanded: _isExpanded,
+        onToggleExpand: _toggleExpand,
+      );
+    } else if (isTablet && !isLandscape) {
+      return TabletLayout(
+        book: widget.book,
+        isExpanded: _isExpanded,
+        onToggleExpand: _toggleExpand,
+      );
+    } else {
+      return PhoneLayout(
+        book: widget.book,
+        isExpanded: _isExpanded,
+        onToggleExpand: _toggleExpand,
+      );
+    }
   }
 }
