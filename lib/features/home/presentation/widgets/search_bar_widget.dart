@@ -14,41 +14,52 @@ class SearchBarWidget extends StatelessWidget {
     required this.onSearch,
     required this.onClear,
   });
-
   @override
   Widget build(BuildContext context) {
+    // Determine if we're on a tablet or iOS platform
+    final isTablet = MediaQuery.of(context).size.width >= 600;
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
     return Container(
-      // height: 48.h,
+      height: isTablet ? 56.h : 48.h,
       decoration: BoxDecoration(
         color: ColorsManager.moreLighterGray,
-        borderRadius: BorderRadius.circular(8.r),
+        borderRadius: BorderRadius.circular(isTablet ? 12.r : 8.r),
         border: Border.all(color: ColorsManager.lighterGray),
       ),
       child: TextField(
         controller: controller,
         decoration: InputDecoration(
           hintText: 'Search books...',
-          hintStyle: TextStyle(color: ColorsManager.gray, fontSize: 14.sp),
-          prefixIcon: Icon(Icons.search, color: ColorsManager.gray, size: 20.r),
+          hintStyle: TextStyle(
+            color: ColorsManager.gray,
+            fontSize: isTablet ? 16.sp : 14.sp,
+          ),
+          prefixIcon: Icon(
+            isIOS ? Icons.search : Icons.search,
+            color: ColorsManager.gray,
+            size: isTablet ? 24.r : 20.r,
+          ),
           suffixIcon:
               controller.text.isNotEmpty
                   ? GestureDetector(
                     onTap: onClear,
                     child: Icon(
-                      Icons.close,
+                      isIOS ? Icons.clear : Icons.close,
                       color: ColorsManager.gray,
-                      size: 20.r,
+                      size: isTablet ? 24.r : 20.r,
                     ),
                   )
                   : null,
           border: InputBorder.none,
           contentPadding: EdgeInsets.symmetric(
-            vertical: 12.h,
-            horizontal: 16.w,
+            vertical: isTablet ? 16.h : 12.h,
+            horizontal: isTablet ? 20.w : 16.w,
           ),
         ),
         onSubmitted: onSearch,
         textInputAction: TextInputAction.search,
+        style: TextStyle(fontSize: isTablet ? 16.sp : 14.sp),
         onChanged: (value) {
           // Rebuild to show/hide clear button
           (context as Element).markNeedsBuild();
