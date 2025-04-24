@@ -8,9 +8,8 @@ class ShimmerLoading extends StatelessWidget {
   const ShimmerLoading({super.key});
   @override
   Widget build(BuildContext context) {
-    // Determine if we're on a tablet based on width
     final isTablet = MediaQuery.of(context).size.width >= 600;
-    // Check if we're in landscape orientation
+
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
 
@@ -38,7 +37,6 @@ class ShimmerLoading extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Book cover placeholder
               Container(
                 width: 80.w,
                 height: 120.h,
@@ -48,12 +46,11 @@ class ShimmerLoading extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 16.w),
-              // Book details placeholders
+
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Title placeholder
                     Container(
                       width: double.infinity,
                       height: 16.h,
@@ -63,7 +60,7 @@ class ShimmerLoading extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 8.h),
-                    // Author placeholder
+
                     Container(
                       width: 150.w,
                       height: 12.h,
@@ -73,7 +70,7 @@ class ShimmerLoading extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 8.h),
-                    // Languages placeholder
+
                     Container(
                       width: 100.w,
                       height: 12.h,
@@ -83,7 +80,7 @@ class ShimmerLoading extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 8.h),
-                    // Download count placeholder
+
                     Container(
                       width: 80.w,
                       height: 12.h,
@@ -98,7 +95,7 @@ class ShimmerLoading extends StatelessWidget {
             ],
           ),
           SizedBox(height: 16.h),
-          // Summary title placeholder
+
           Container(
             width: 60.w,
             height: 14.h,
@@ -108,7 +105,7 @@ class ShimmerLoading extends StatelessWidget {
             ),
           ),
           SizedBox(height: 8.h),
-          // Summary content placeholders
+
           Container(
             width: double.infinity,
             height: 12.h,
@@ -140,7 +137,6 @@ class ShimmerLoading extends StatelessWidget {
     );
   }
 
-  // Phone shimmer layout
   Widget _buildPhoneShimmer() {
     return ListView.builder(
       itemCount: 6,
@@ -152,7 +148,6 @@ class ShimmerLoading extends StatelessWidget {
     );
   }
 
-  // Tablet shimmer layout with grid
   Widget _buildTabletShimmer(bool isLandscape) {
     final columnCount = isLandscape ? 3 : 2;
 
@@ -168,7 +163,6 @@ class ShimmerLoading extends StatelessWidget {
     );
   }
 
-  // Tablet shimmer item
   Widget _buildTabletShimmerItem(bool isLandscape) {
     return Container(
       padding: EdgeInsets.all(16.r),
@@ -183,12 +177,10 @@ class ShimmerLoading extends StatelessWidget {
     );
   }
 
-  // Portrait tablet shimmer content
   Widget _buildPortraitTabletShimmerContent() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Book cover placeholder - centered for tablet
         Center(
           child: Container(
             width: 120.w,
@@ -200,7 +192,7 @@ class ShimmerLoading extends StatelessWidget {
           ),
         ),
         SizedBox(height: 16.h),
-        // Title placeholder
+
         Container(
           width: double.infinity,
           height: 16.h,
@@ -210,7 +202,7 @@ class ShimmerLoading extends StatelessWidget {
           ),
         ),
         SizedBox(height: 8.h),
-        // Author placeholder
+
         Container(
           width: 150.w,
           height: 12.h,
@@ -220,7 +212,7 @@ class ShimmerLoading extends StatelessWidget {
           ),
         ),
         SizedBox(height: 8.h),
-        // Languages placeholder
+
         Container(
           width: 100.w,
           height: 12.h,
@@ -233,12 +225,10 @@ class ShimmerLoading extends StatelessWidget {
     );
   }
 
-  // Landscape tablet shimmer content - more horizontal layout
   Widget _buildLandscapeTabletShimmerContent() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Book cover placeholder
         Container(
           width: 80.w,
           height: 120.h,
@@ -248,12 +238,11 @@ class ShimmerLoading extends StatelessWidget {
           ),
         ),
         SizedBox(width: 16.w),
-        // Book details placeholders
+
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Title placeholder
               Container(
                 width: double.infinity,
                 height: 16.h,
@@ -263,7 +252,7 @@ class ShimmerLoading extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 8.h),
-              // Author placeholder
+
               Container(
                 width: 150.w,
                 height: 12.h,
@@ -273,7 +262,7 @@ class ShimmerLoading extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 8.h),
-              // Languages placeholder
+
               Container(
                 width: 100.w,
                 height: 12.h,

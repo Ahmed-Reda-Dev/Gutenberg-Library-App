@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/theming/styles.dart';
 import '../../../data/models/book_model.dart';
 
-/// Widget to display book details (title, author, languages, download count)
 class BookDetails extends StatelessWidget {
   final BookModel book;
 
@@ -15,7 +14,6 @@ class BookDetails extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Title
         Text(
           book.title,
           style: TextStyles.font13DarkBlueMedium,
@@ -23,7 +21,7 @@ class BookDetails extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
         SizedBox(height: 8.h),
-        // Authors
+
         Text(
           'By ${book.authorNames.join(', ')}',
           style: TextStyles.font13GrayRegular,
@@ -31,7 +29,7 @@ class BookDetails extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
         SizedBox(height: 8.h),
-        // Languages
+
         Text(
           'Languages: ${book.languages.join(', ')}',
           style: TextStyles.font13GrayRegular,
@@ -39,7 +37,7 @@ class BookDetails extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
         SizedBox(height: 8.h),
-        // Download count
+
         Text(
           'Downloads: ${book.downloadCount}',
           style: TextStyles.font13GrayRegular,
