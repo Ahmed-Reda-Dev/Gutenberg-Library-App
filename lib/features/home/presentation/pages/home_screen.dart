@@ -25,10 +25,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Load initial books
+
     context.read<BookCubit>().getBooks();
 
-    // Setup scroll controller for infinite scrolling
     _scrollController.addListener(_onScroll);
   }
 
@@ -54,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!_scrollController.hasClients) return false;
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.offset;
-    // Load more when we're 200 pixels away from the bottom
+
     return currentScroll >= (maxScroll - 200.h);
   }
 
@@ -69,7 +68,6 @@ class _HomeScreenState extends State<HomeScreen> {
     context.read<BookCubit>().resetSearch();
   }
 
-  // ListView for phone view
   Widget _buildListView(List<dynamic> books, bool hasReachedMax) {
     return ListView.builder(
       controller: _scrollController,
@@ -93,13 +91,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // GridView for tablet view
   Widget _buildGridView(
     List<dynamic> books,
     bool hasReachedMax,
     bool isLandscape,
   ) {
-    // Determine grid column count based on orientation
     final columnCount = isLandscape ? 2 : 2;
 
     return GridView.builder(
@@ -126,9 +122,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Determine if we're on a tablet based on width
     final isTablet = MediaQuery.of(context).size.width >= 600;
-    // Check if we're in landscape orientation
+
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
 
@@ -138,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         title: Text('Book Listing App', style: TextStyles.font24BlueBold),
-        // Add adaptable back button padding for iOS
+
         automaticallyImplyLeading: false,
         centerTitle: Theme.of(context).platform == TargetPlatform.iOS,
       ),
@@ -231,7 +226,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 }
 
-                // Default case, shouldn't reach here
                 return const SizedBox();
               },
             ),

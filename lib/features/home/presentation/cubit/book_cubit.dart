@@ -13,21 +13,17 @@ class BookCubit extends Cubit<BookState> {
   BookCubit(this._getBooksUseCase, this._searchBooksUseCase)
     : super(const BookState.initial());
   Future<void> getBooks({bool refresh = false}) async {
-    // If we're refreshing, reset to initial state
     if (refresh) {
       emit(const BookState.loading());
-    } else // Check if state is the success variant from BookState
-    if (state is Success) {
+    } else if (state is Success) {
       final currentState = state as Success;
 
-      // Don't fetch more if we've reached the max
       if (currentState.hasReachedMax) return;
     }
 
     final int nextPage =
         (state is Success) ? (state as Success).currentPage + 1 : 1;
 
-    // Try to load from cache first if it's the first page
     if (nextPage == 1) {
       try {
         final cachedBooks = await _getBooksUseCase.getCachedBooks();
@@ -40,15 +36,10 @@ class BookCubit extends Cubit<BookState> {
               searchQuery: null,
             ),
           );
-          // Return early to avoid showing the loading state
-          // The user will still see fresh data when the network request completes
         }
-      } catch (_) {
-        // Ignore cache errors and continue with network request
-      }
+      } catch (_) {}
     }
 
-    // Show loading state for the first page or if we're refreshing
     if (nextPage == 1 || refresh) {
       emit(const BookState.loading());
     }
@@ -64,17 +55,14 @@ class BookCubit extends Cubit<BookState> {
       return;
     }
 
-    // Always reset to loading state for a new search
     if (refresh) {
       emit(const BookState.loading());
     } else if (state is Success) {
       final currentState = state as Success;
 
-      // If it's a new search query, reset to loading
       if (currentState.searchQuery != query) {
         emit(const BookState.loading());
       } else if (currentState.hasReachedMax) {
-        // Don't fetch more if we've reached the max for this search
         return;
       }
     }
@@ -84,7 +72,6 @@ class BookCubit extends Cubit<BookState> {
             ? (state as Success).currentPage + 1
             : 1;
 
-    // Show loading state for the first page of a search
     if (nextPage == 1) {
       emit(const BookState.loading());
     }
@@ -104,14 +91,12 @@ class BookCubit extends Cubit<BookState> {
       final newBooks = data.results;
       final List<BookModel> allBooks = [];
 
-      // If we're paginating, combine the existing books with the new ones
       if (state is Success && page > 1) {
         allBooks.addAll((state as Success).books);
       }
 
       allBooks.addAll(newBooks);
 
-      // Cache books if this is a fresh load (first page) and not a search
       if (page == 1 && searchQuery == null) {
         _getBooksUseCase.cacheBooks(newBooks);
       }
@@ -127,12 +112,8 @@ class BookCubit extends Cubit<BookState> {
     } else if (result is api_result.Failure) {
       final errorMsg = (result).error;
 
-      // If we have books in the state already (pagination failure),
-      // keep the existing state but maybe show a message to the user
       if (state is Success && page > 1) {
-        // Keep the current state but maybe show a message to the user
       } else {
-        // For first page failures, try to load from cache
         if (page == 1 && searchQuery == null) {
           _loadFromCacheOnError();
         } else {
@@ -148,7 +129,6 @@ class BookCubit extends Cubit<BookState> {
     }
   }
 
-  /// Loads books from the cache when an API request fails
   Future<void> _loadFromCacheOnError() async {
     try {
       final cachedBooks = await _getBooksUseCase.getCachedBooks();
@@ -156,14 +136,12 @@ class BookCubit extends Cubit<BookState> {
         emit(
           BookState.success(
             books: cachedBooks,
-            hasReachedMax:
-                true, // Consider we've reached max since we're offline
+            hasReachedMax: true,
             currentPage: 0,
             searchQuery: null,
           ),
         );
       } else {
-        // No cached data available
         emit(
           const BookState.error(
             "No internet connection and no cached data available",

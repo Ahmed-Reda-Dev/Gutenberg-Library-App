@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/theming/styles.dart';
 
-/// Widget to display an expandable summary text with "See More"/"See Less" functionality
 class ExpandableSummary extends StatelessWidget {
   final String summary;
   final bool isExpanded;

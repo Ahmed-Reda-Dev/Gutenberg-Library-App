@@ -6,7 +6,6 @@ import 'book_list/phone_layout.dart';
 import 'book_list/phone_landscape_layout.dart';
 import 'book_list/tablet_layout.dart';
 
-/// Main book list item widget that adapts to different device types and orientations
 class BookListItem extends StatefulWidget {
   final BookModel book;
 
@@ -27,7 +26,6 @@ class _BookListItemState extends State<BookListItem> {
 
   @override
   Widget build(BuildContext context) {
-    // Check if we're on a tablet or in landscape orientation
     final isTablet = MediaQuery.of(context).size.width >= 600;
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
@@ -52,7 +50,6 @@ class _BookListItemState extends State<BookListItem> {
     );
   }
 
-  /// Builds the appropriate layout based on device and orientation
   Widget _buildAdaptiveLayout(
     bool isTablet,
     bool isLandscape,

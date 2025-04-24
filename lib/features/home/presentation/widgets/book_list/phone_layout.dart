@@ -7,7 +7,7 @@ import 'book_details.dart';
 import 'cover_image.dart';
 import 'expandable_summary.dart';
 
-/// Layout specifically for phones in portrait mode
+
 class PhoneLayout extends StatelessWidget {
   final BookModel book;
   final bool isExpanded;
@@ -29,21 +29,21 @@ class PhoneLayout extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Book cover image
+              
               BookCoverImage(book: book),
               SizedBox(width: 16.w),
-              // Book details
+              
               Expanded(child: BookDetails(book: book)),
             ],
           ),
 
-          // Summary section if available
+          
           if (book.summary != null && book.summary!.isNotEmpty) ...[
             SizedBox(height: 16.h),
-            // Summary title
+            
             Text('Summary', style: TextStyles.font13BlueSemiBold),
             SizedBox(height: 8.h),
-            // Summary with expandable functionality
+            
             ExpandableSummary(
               summary: book.summary!,
               isExpanded: isExpanded,

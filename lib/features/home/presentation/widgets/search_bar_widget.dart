@@ -16,7 +16,6 @@ class SearchBarWidget extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    // Determine if we're on a tablet or iOS platform
     final isTablet = MediaQuery.of(context).size.width >= 600;
     final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
 
@@ -61,7 +60,6 @@ class SearchBarWidget extends StatelessWidget {
         textInputAction: TextInputAction.search,
         style: TextStyle(fontSize: isTablet ? 16.sp : 14.sp),
         onChanged: (value) {
-          // Rebuild to show/hide clear button
           (context as Element).markNeedsBuild();
         },
       ),

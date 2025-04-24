@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/theming/colors.dart';
 import '../../../data/models/book_model.dart';
 
-/// Widget to display the book cover image
 class BookCoverImage extends StatelessWidget {
   final BookModel book;
   final double? width;
